@@ -1,4 +1,4 @@
-version: '3'
+version: '3.3'
 services:
   postgres:
     image: postgres:latest
@@ -6,4 +6,36 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: auth
+    volumes:
+      - ${PWD}/initdb.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+
+  hydra:
+    depends_on:
+      - hydra-migrate
+    image: oryd/hydra:latest
+    ports:
+      - "4444:4444" # Public port
+      - "4445:4445" # Admin port
+      - "5555:5555" # Port for hydra token user
+    command:
+      serve all --dangerous-force-http
+    environment:
+      # - LOG_LEVEL=debug
+      - OAUTH2_ISSUER_URL=http://localhost:4444
+      - OAUTH2_CONSENT_URL=http://localhost:3000/consent
+      - OAUTH2_LOGIN_URL=http://localhost:3000/login
+      - DSN=postgres://hydra:hello@postgres:5432/hydra?sslmode=disable
+      - SYSTEM_SECRET=youReallyNeedToChangeThis
+      - OAUTH2_SHARE_ERROR_DEBUG=1
+      - OIDC_SUBJECT_TYPES_SUPPORTED=public,pairwise
+      - OIDC_SUBJECT_TYPE_PAIRWISE_SALT=youReallyNeedToChangeThis
+      # - OAUTH2_ACCESS_TOKEN_STRATEGY=jwt
+    restart: unless-stopped
+
+  hydra-migrate:
+    image: oryd/hydra:latest
+    environment:
+      - DSN=postgres://hydra:hello@postgres:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+    command:
+      migrate sql -e
+    restart: on-failure
