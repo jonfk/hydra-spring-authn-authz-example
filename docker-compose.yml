@@ -21,12 +21,12 @@ services:
       serve all --dangerous-force-http
     environment:
       # - LOG_LEVEL=debug
-      - OAUTH2_ISSUER_URL=http://localhost:4444
-      - OAUTH2_CONSENT_URL=http://localhost:3000/consent
-      - OAUTH2_LOGIN_URL=http://localhost:3000/login
+      - URLS_SELF_ISSUER=http://localhost:4444
+      - URLS_CONSENT=http://localhost:3000/consent
+      - URLS_LOGIN=http://localhost:3000/login
       - DSN=postgres://hydra:hello@postgres:5432/hydra?sslmode=disable
-      - SYSTEM_SECRET=youReallyNeedToChangeThis
-      - OAUTH2_SHARE_ERROR_DEBUG=1
+      - SECRETS_SYSTEM=youReallyNeedToChangeThis
+      - OAUTH2_EXPOSE_INTERNAL_ERRORS=1
       - OIDC_SUBJECT_TYPES_SUPPORTED=public,pairwise
       - OIDC_SUBJECT_TYPE_PAIRWISE_SALT=youReallyNeedToChangeThis
       # - OAUTH2_ACCESS_TOKEN_STRATEGY=jwt
