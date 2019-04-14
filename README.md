@@ -22,11 +22,19 @@ curl -X POST \
 }'
 ```
 
-Test the client
+Test the client by getting an access token with client_credentials
 ```
 curl -X POST \                                                                                                                                                                    master ✱ ◼
   http://localhost:4444/oauth2/token \
   -F grant_type=client_credentials \
   -F client_id=my-client-credentials-test \
   -F client_secret=my-secret | less
+```
+
+Introspect the token
+```
+curl -X POST \
+  http://localhost:4445/oauth2/introspect \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'token=Loi11I-9qKI6bj89Wb9ijZJ-XDNGF-99rfyde88jdZQ.pi09SRZrQT8omcf6Mz2pli_KMUmHDi2usHr57rqK23w'
 ```
