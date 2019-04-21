@@ -33,21 +33,33 @@ class HydraService(val hydraAdminRestOperations: RestOperations) {
         return hydraAdminRestOperations.exchange(uri.toUriString(), HttpMethod.PUT, HttpEntity(acceptLoginRequest), CompletedRequest::class.java)
     }
 
+    /**
+     * @see <a href="https://www.ory.sh/docs/hydra/sdk/api#reject-a-login-request" target="_top">Reject a login request</a>
+     */
     fun rejectLoginRequest(challenge: String, rejectRequest: RejectRequest): ResponseEntity<CompletedRequest> {
         val uri = UriComponentsBuilder.fromUriString("/oauth2/auth/requests/login/{challenge}/reject").buildAndExpand(challenge)
         return hydraAdminRestOperations.exchange(uri.toUriString(), HttpMethod.PUT, HttpEntity(rejectRequest), CompletedRequest::class.java)
     }
 
+    /**
+     * @see <a href="https://www.ory.sh/docs/hydra/sdk/api#get-consent-request-information" target="_top">Get consent request information</a>
+     */
     fun getConsentRequest(challenge: String): ResponseEntity<ConsentRequest> {
         val uri = UriComponentsBuilder.fromUriString("/oauth2/auth/requests/consent/{challenge}").buildAndExpand(challenge)
         return hydraAdminRestOperations.getForEntity(uri.toUriString(), ConsentRequest::class.java)
     }
 
+    /**
+     * @see <a href="https://www.ory.sh/docs/hydra/sdk/api#accept-an-consent-request" target="_top">Accept a consent request</a>
+     */
     fun acceptConsentRequest(challenge: String, acceptConsentRequest: AcceptConsentRequest): ResponseEntity<CompletedRequest> {
         val uri = UriComponentsBuilder.fromUriString("/oauth2/auth/requests/consent/{challenge}/accept").buildAndExpand(challenge)
         return hydraAdminRestOperations.exchange(uri.toUriString(), HttpMethod.PUT, HttpEntity(acceptConsentRequest), CompletedRequest::class.java)
     }
 
+    /**
+     * @see <a href="https://www.ory.sh/docs/hydra/sdk/api#reject-an-consent-request" target="_top">Reject a consent request</a>
+     */
     fun rejectConsentRequest(challenge: String, rejectRequest: RejectRequest): ResponseEntity<CompletedRequest> {
         val uri = UriComponentsBuilder.fromUriString("/oauth2/auth/requests/consent/{challenge}/reject").buildAndExpand(challenge)
         return hydraAdminRestOperations.exchange(uri.toUriString(), HttpMethod.PUT, HttpEntity(rejectRequest), CompletedRequest::class.java)
