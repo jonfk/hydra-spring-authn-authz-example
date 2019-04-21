@@ -18,7 +18,7 @@ class LoginAndConsentController(val hydraService: HydraService) {
     fun login(@RequestParam("error") error: String?,
               @RequestParam("login_challenge") challenge: String?): ModelAndView {
         val loginModel = ModelAndView("login.html")
-        if (error == null) {
+        if (error != null) {
             loginModel.addObject("loginError", true)
         }
 

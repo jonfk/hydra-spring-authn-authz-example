@@ -13,9 +13,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -41,6 +43,7 @@ class SecurityConfiguration(val hydraService: HydraService) : WebSecurityConfigu
                 .formLogin()
                 .loginPage("/login")
                 .successHandler(hydraAuthenticationSuccessHandler())
+                .failureHandler(AuthenticationFailureHandlerImpl())
                 .permitAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -78,3 +81,13 @@ class HydraAuthenticationSuccessHandler(private val hydraService: HydraService) 
 
 }
 
+class AuthenticationFailureHandlerImpl : AuthenticationFailureHandler {
+    private val LOGIN_FAILURE_URL = "/login?error"
+
+    override fun onAuthenticationFailure(request: HttpServletRequest?, response: HttpServletResponse?, exception: AuthenticationException?) {
+        // Logic could be added to limit number of retries and fail the login request
+        val challenge = request?.getParameter("challenge")!!
+        response?.sendRedirect("$LOGIN_FAILURE_URL&login_challenge=$challenge")
+    }
+
+}
